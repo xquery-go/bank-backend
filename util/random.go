@@ -35,11 +35,12 @@ func RandomOwner() string {
 	return RandomString(6)
 }
 
-// generate random bank balance
+// generate random bank balance and/or number
 func RandomBalance() int64 {
 	return RandomInt(0, 1000)
 }
 
+// generate random currency
 func RandomCurrency() string {
 	currencies := []string{"AUD", "EUR", "USD", "CAD"}
 	return currencies[rand.Intn(len(currencies))]
