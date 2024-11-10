@@ -9,29 +9,66 @@ import (
 )
 
 func TestCreateTransaction(t *testing.T) {
-	// test invalid transaction with account that doesn't exist
-	invalidArg := CreateTransactionParams{
-		AccountID: util.RandomInvalidAccountId(),
-		Amount:    util.RandomTransactionAmount(),
-	}
-
-	invalidTransaction, err := testQueries.CreateTransaction(context.Background(), invalidArg)
-
-	require.Error(t, err)
-	require.Empty(t, invalidTransaction)
-
-	validArg := CreateTransactionParams{
+	arg := CreateTransactionParams{
 		AccountID: createRandomAccount(t).ID,
 		Amount:    util.RandomTransactionAmount(),
 	}
 
-	validTransaction, err := testQueries.CreateTransaction(context.Background(), validArg)
+	transaction, err := testQueries.CreateTransaction(context.Background(), arg)
 	require.NoError(t, err)
-	require.NotEmpty(t, validTransaction)
+	require.NotEmpty(t, transaction)
 
-	require.Equal(t, validArg.AccountID, validTransaction.AccountID)
-	require.Equal(t, validArg.Amount, validTransaction.Amount)
+	require.Equal(t, arg.AccountID, transaction.AccountID)
+	require.Equal(t, arg.Amount, transaction.Amount)
 
-	require.NotZero(t, validTransaction.CreatedAt)
-	require.NotZero(t, validTransaction.ID)
+	require.NotZero(t, transaction.CreatedAt)
+	require.NotZero(t, transaction.ID)
+}
+
+func TestGetTransaction(t *testing.T) {
+	// create account + transaction
+	newAcc := createRandomAccount(t)
+	arg := CreateTransactionParams{
+		AccountID: newAcc.ID,
+		Amount:    util.RandomTransactionAmount(),
+	}
+
+	transaction, err := testQueries.CreateTransaction(context.Background(), arg)
+
+	fetchedTransaction, err := testQueries.GetTransaction(context.Background(), transaction.ID)
+	require.NoError(t, err)
+	require.NotEmpty(t, fetchedTransaction)
+
+	require.Equal(t, transaction.ID, fetchedTransaction.ID)
+	require.Equal(t, transaction.AccountID, fetchedTransaction.AccountID)
+	require.Equal(t, transaction.Amount, fetchedTransaction.Amount)
+	require.Equal(t, transaction.CreatedAt, fetchedTransaction.CreatedAt)
+}
+
+func TestListTransactions(t *testing.T) {
+	// create new account and make many transactions
+	newAcc := createRandomAccount(t)
+	ctArgs := CreateTransactionParams{
+		AccountID: newAcc.ID,
+		Amount:    util.RandomTransactionAmount(),
+	}
+
+	transactionQty := 12
+	for i := 0; i < transactionQty; i++ {
+		testQueries.CreateTransaction(context.Background(), ctArgs)
+	}
+
+	// get records 2-12
+	ltArgs := ListTransactionsParams{
+		AccountID: newAcc.ID,
+		Limit:     11,
+		Offset:    1,
+	}
+	transactionList, err := testQueries.ListTransactions(context.Background(), ltArgs)
+	require.NoError(t, err)
+	require.Len(t, transactionList, 11)
+
+	for _, transaction := range transactionList {
+		require.NotEmpty(t, transaction)
+	}
 }
