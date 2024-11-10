@@ -13,7 +13,7 @@ import (
 var (
 	testQueries *Queries
 	dbDriver    string
-	dbSource    string
+	dbUrl       string
 )
 
 // load .env before test
@@ -25,13 +25,13 @@ func init() {
 
 	// set global vars for test
 	dbDriver = os.Getenv("POSTGRES_DRIVER")
-	dbSource = os.Getenv("POSTGRES_SOURCE")
+	dbUrl = os.Getenv("POSTGRES_URL")
 }
 
 // test entry
 func TestMain(m *testing.M) {
 
-	conn, err := sql.Open(dbDriver, dbSource)
+	conn, err := sql.Open(dbDriver, dbUrl)
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)
 	}
