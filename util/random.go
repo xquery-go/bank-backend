@@ -45,3 +45,13 @@ func RandomCurrency() string {
 	currencies := []string{"AUD", "EUR", "USD", "CAD"}
 	return currencies[rand.Intn(len(currencies))]
 }
+
+// generate random account id (invalid and valid)
+func RandomInvalidAccountId() int64 {
+	return RandomInt(-1000, -1)
+}
+
+// generate random transaction amount
+func RandomTransactionAmount() int64 {
+	return RandomInt(-1000, 1000)
+}
