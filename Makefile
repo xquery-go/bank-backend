@@ -30,8 +30,18 @@ migratedown:
 sqlc:
 	sqlc generate
 
-# run tests
+# run tests excluding some files (sqlc generated)
+COVERAGE_EXCLUDE := "db.go\|models.go"
 test:
-	go test -v -cover ./...
+	go test -v -coverprofile=coverage.tmp ./... && \
+		cat coverage.tmp | grep -v $(COVERAGE_EXCLUDE) > coverage.out && \
+		go tool cover -func=coverage.out && \
+		rm coverage.tmp coverage.out
 
-.PHONY: createdb postgres dropdb migrateup migratedown sqlc test
+test-html:
+	go test -v -coverprofile=coverage.tmp ./... && \
+		cat coverage.tmp | grep -v $(COVERAGE_EXCLUDE) > coverage.out && \
+		go tool cover -html=coverage.out && \
+		rm coverage.tmp coverage.out
+
+.PHONY: createdb postgres dropdb migrateup migratedown sqlc test test-html
