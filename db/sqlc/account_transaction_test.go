@@ -48,13 +48,13 @@ func TestGetTransaction(t *testing.T) {
 func TestListTransactions(t *testing.T) {
 	// create new account and make many transactions
 	newAcc := createRandomAccount(t)
-	ctArgs := CreateTransactionParams{
-		AccountID: newAcc.ID,
-		Amount:    util.RandomTransactionAmount(),
-	}
 
 	transactionQty := 12
 	for i := 0; i < transactionQty; i++ {
+		ctArgs := CreateTransactionParams{
+			AccountID: newAcc.ID,
+			Amount:    util.RandomTransactionAmount(),
+		}
 		testQueries.CreateTransaction(context.Background(), ctArgs)
 	}
 
