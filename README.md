@@ -5,7 +5,7 @@ A mini backend implementation of a basic banking system built with Go & PostgreS
 - Database design and SQL with PostgreSQL
 - Database migration management
 - Containerisation with Docker
-- Makefile (somehow I've never discovered this)
+- Makefile (somehow I've never discovered this..)
 - Writing unit tests
 
 ## 🛠 Tech Stack
